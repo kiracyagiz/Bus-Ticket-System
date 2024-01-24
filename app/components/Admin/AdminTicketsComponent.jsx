@@ -19,7 +19,8 @@ const AdminTicketsComponent = ({searchParams}) => {
   const [departureTime,setSelectedDepartureTime] = useState('')
   const [departureCity,setSelectedDepartureCity] = useState('')
   const [arrivalTime,setSelectedArrivalTime] = useState('');
-  const [forceUpdate, setForceUpdate] = useState(0);
+  const [triggered,setTriggered] = useState(false);
+
 
 
   // dmin?componentName=allTickets&arrivalCity=Durres&rideDate=2023-12-25
@@ -48,7 +49,7 @@ const AdminTicketsComponent = ({searchParams}) => {
     };
 
     fetchData();
-  }, [searchParams]);
+  }, [searchParams,triggered]);
 
 
 
@@ -88,7 +89,7 @@ const AdminTicketsComponent = ({searchParams}) => {
       </tbody>
     </table>
    
-    <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} secondDt={selectedTicket}/>
+    <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} secondDt={selectedTicket} setTriggered={setTriggered} triggered={triggered}/>
     {/* <Link
      href={{
       pathname: '/admin',

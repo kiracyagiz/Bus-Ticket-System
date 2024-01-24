@@ -9,7 +9,8 @@ import {
   addDoc,
   updateDoc,
   doc,
-  getDoc
+  getDoc,
+  deleteDoc
 } from "firebase/firestore";
 
 export const getTicket = async () => {
@@ -246,20 +247,18 @@ export const getAllTickets = async () => {
     }
   };
 
-  export const deleteEmployee = async (employeeId) => {
+  export const deleteEmployeeFirebase = async (employeeId) => {
     try {
-      const employeeCollectionRef = collection(db, 'employee');
-      const employeeDocRef = doc(employeeCollectionRef, employeeId);
+      const collectionRef = collection(db, 'employee');
+      const q = query(collectionRef, where('employeeId', '==', employeeId));
+      const querySnapshot = await getDocs(q);
   
-      const employeeSnapshot = await getDoc(employeeDocRef);
-  
-      if (employeeSnapshot.exists()) {
-        await deleteDoc(employeeDocRef);
+      querySnapshot.forEach(async (employeeDoc) => {
+        const docRef = doc(collectionRef, employeeDoc.id);
+        await deleteDoc(docRef);
   
         await updateBusesWithEmployeeId(employeeId, 'not-selected');
-      } else {
-        console.log('Employee document not found');
-      }
+      });
     } catch (error) {
       console.error('Error deleting employee:', error);
     }
@@ -283,5 +282,18 @@ export const getAllTickets = async () => {
       console.log('Buses collection updated successfully');
     } catch (error) {
       console.error('Error updating buses collection:', error);
+    }
+  };
+
+  export const addTicketInformation = async (newTicketInfoData) => {
+    try {
+      const collectionRef = collection(db, "ticketInformation");
+  
+      const newTicketInfoRef = await addDoc(collectionRef, newTicketInfoData);
+  
+      return newTicketInfoRef.id;
+    } catch (error) {
+      console.error("Error adding ticket information:", error);
+      return null;
     }
   };

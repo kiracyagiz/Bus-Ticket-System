@@ -12,7 +12,8 @@ const AdminEmployers = ({searchParams}) => {
   const [hireDate,setHireDate] = useState('');
   const [salary,setSalary] = useState('');
   const [isOpen,setIsOpen] = useState('')
-  const [selectedTicket,setSelectedTicket] = useState([])
+  const [selectedTicket,setSelectedTicket] = useState([]);
+  const [triggered,setTriggered] = useState(false);
 
   const toggleSidebar = (dt) => {
     setIsOpen(!isOpen);
@@ -30,7 +31,7 @@ const AdminEmployers = ({searchParams}) => {
     };
 
     fetchData();
-  }, [searchParams,employeeData]);
+  }, [searchParams,triggered]);
 
 
 
@@ -66,7 +67,7 @@ const AdminEmployers = ({searchParams}) => {
        
       </tbody>
     </table>
-    <Sidebar thirdData={selectedTicket} isOpen={isOpen} setIsOpen={setIsOpen}/>
+    <Sidebar thirdData={selectedTicket} isOpen={isOpen} setIsOpen={setIsOpen} setTriggered={setTriggered} triggered={triggered}/>
     </div>
   )
 }

@@ -1,14 +1,87 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getCheckoutTicket } from "../collection";
+import { addTicketInformation, getCheckoutTicket } from "../collection";
 import Sidebar from "../components/Sidebar";
 import { FaBus ,FaSuitcase } from "react-icons/fa";
-import { cities } from "../references/cities";
+import { popularCitizenships,checkoutTypes } from "../references/cities";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Checkout = ({ searchParams }) => {
   const [ticketData, setTicketsData] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedSeat, setSelectedSeat] = useState(null);
+
+  const router = useRouter();
+
+
+  const [formData, setFormData] = useState({
+    seat: selectedSeat,
+    gender: "",
+    name: "",
+    surname: "",
+    citizen: "",
+    type: "",
+    cardId: "",
+    mail: "",
+    phoneNumber: ""
+  });
+
+  const handleTicketInfoFormSubmit = async (ticketInfoFormData) => {
+    try {
+      const newTicketInfoId = await addTicketInformation(ticketInfoFormData);
+      console.log(`New ticket information added with ID: ${newTicketInfoId}`);
+      router.push('/history')
+
+      
+    } catch (error) {
+      console.error("Error adding ticket information:", error);
+    }
+  };
+
+  useEffect(() => {
+    setFormData((prevData) => ({
+      ...prevData,
+      seat: selectedSeat,
+    }));
+  }, [selectedSeat]);
+
+  const isFormDataComplete = () => {
+    return (
+      formData.seat &&
+      formData.gender &&
+      formData.name &&
+      formData.surname &&
+      formData.citizen &&
+      formData.type &&
+      formData.cardId &&
+      formData.mail &&
+      formData.phoneNumber
+    );
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+
+  const handleSelectChange = (name, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  useEffect(() => {
+    
+    console.log(formData,'myformData')
+  }, [formData])
+  
  
   useEffect(() => {
     const fetchData = async () => {
@@ -22,6 +95,14 @@ const Checkout = ({ searchParams }) => {
 
     fetchData();
   }, [searchParams]);
+
+  const handleGenderChange = (selectedGender) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      gender: selectedGender,
+    }));
+  };
+
 
   return (
     <div className="flex flex-col   lg:flex-row p-4 lg:p-20 bg-gray-100 w-full h-full">
@@ -64,44 +145,64 @@ const Checkout = ({ searchParams }) => {
           <div className="my-4">
             <p>Gender</p>
             <div className="flex items-center ">
-              <p className="cursor-pointer w-20 py-1 text-center border-gray-400 border">
+              <p className={`cursor-pointer w-20 py-1 text-center border-gray-400 border ${formData.gender == "Female" && 'bg-black text-white'}`}
+                          onClick={() => handleGenderChange('Female')}
+
+              >
                 Female
               </p>
-              <p className="cursor-pointer w-20 py-1 text-center border-gray-400 border">
+              <p className={`cursor-pointer w-20 py-1 text-center border-gray-400 border ${formData.gender == "Male" && 'bg-black text-white'}`}
+                          onClick={() => handleGenderChange('Male')}
+
+              >
                 Male
               </p>
             </div>
 
             <div className="flex flex-col lg:flex-row lg:flex-wrap gap-4 py-2">
               <input
+                required
                 type="text"
+                name="name"
                 placeholder="Name"
                 className="lg:w-[45%] bg-white outline-none border-gray-800 border-2 p-2 rounded-lg"
+                onChange={handleChange}
+
               />
               <input
+                required
                 type="text"
+                name="surname"
                 placeholder="Surname"
+                onChange={handleChange}
                 className="lg:w-[45%] bg-white outline-none border-gray-800 border-2 p-2 rounded-lg"
               />
               <select
                 className="border-black border-2 p-2 rounded-lg lg:w-[45%] text-lg"
+                onChange={(e) => handleSelectChange("citizen", e.target.value)}
+
               >
                 <option selected>Choose a country</option>
-                {cities.map((city, index) => (
-                  <option key={index}>{city}</option>
+                {popularCitizenships.map((city, index) => (
+                  <option key={index} >{city}</option>
                 ))}
               </select>
               <select
                 className="border-black border-2 p-2 rounded-lg lg:w-[45%] text-lg"
+                onChange={(e) => handleSelectChange("type", e.target.value)}
+
               >
                 <option selected>Choose a country</option>
-                {cities.map((city, index) => (
-                  <option key={index}>{city}</option>
+                {checkoutTypes.map((city, index) => (
+                  <option key={index} >{city}</option>
                 ))}
               </select>
               <input
+                required
                 type="text"
-                placeholder="Surname"
+                name="cardId"
+                onChange={handleChange}
+                placeholder="Citizen ID"
                 className="lg:w-[45%] bg-white outline-none border-gray-800 border-2 p-2 rounded-lg"
               />
             </div>
@@ -143,13 +244,19 @@ const Checkout = ({ searchParams }) => {
 
             <div className="flex flex-col lg:flex-row lg:flex-wrap gap-4 py-2">
               <input
+                required
                 type="text"
-                placeholder="Name"
+                name="mail"
+                onChange={handleChange}
                 className="lg:w-[45%] bg-white outline-none border-gray-800 border-2 p-2 rounded-lg"
+                placeholder="E-Mail"
               />
               <input
+                required
                 type="text"
-                placeholder="Surname"
+                name="phoneNumber"
+                placeholder="Phone Number"
+                onChange={handleChange}
                 className="lg:w-[45%] bg-white outline-none border-gray-800 border-2 p-2 rounded-lg"
               />
             
@@ -182,16 +289,20 @@ const Checkout = ({ searchParams }) => {
               ticketData[0].price
             }</p>
           </div>
-          <button
-              className="bg-gray-800 w-full mt-8 text-white font-semibold p-2"
-            >
-              Buy
-            </button>
+        <button
+          className={`${
+            isFormDataComplete() ? 'bg-gray-800' : 'bg-gray-500'
+          } w-full mt-8 text-white font-semibold p-2`}
+          disabled={!isFormDataComplete()}
+          onClick={() => handleTicketInfoFormSubmit(formData)}
+        >
+          Buy
+        </button>
       </div>
 
       
 
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} dt={ticketData} />
+      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} dt={ticketData} setSelectedSeat={setSelectedSeat} selectedSeat={selectedSeat}/>
     </div>
   );
 };

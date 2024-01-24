@@ -2,13 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import { TbArmchair } from "react-icons/tb";
-import { deleteTicketFirebase, updateTicketFireBase } from "../collection";
+import { deleteEmployeeFirebase, deleteTicketFirebase, updateTicketFireBase } from "../collection";
 import { useRouter } from "next/navigation";
 
-const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData }) => {
+const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData ,setTriggered,triggered,setSelectedSeat,selectedSeat}) => {
 
-  const route = useRouter();
+  const handleSeatClick = (seatId) => {
 
+    if (dt[0].seats[seatId] !== 'man' && dt[0].seats[seatId] !== 'woman') {
+      setSelectedSeat(seatId)
+      
+    }
+  };
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -20,7 +25,9 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData }) => {
       await updateTicketFireBase(ticketId,formData);
       console.log('Data updated successfully');
      
-      setIsOpen(!isOpen)
+      setIsOpen(!isOpen);
+      setTriggered(!triggered)
+
 
     } catch (error) {
       console.error('Error updating data:', error);
@@ -32,7 +39,22 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData }) => {
     try {
       await deleteTicketFirebase(ticketId,formData);
       console.log('Data deleted successfully');
-      setIsOpen(!isOpen)
+      setIsOpen(!isOpen);
+      setTriggered(!triggered)
+
+
+    } catch (error) {
+      console.error('Deleted data:', error);
+
+    }
+  };
+
+  const deleteEmployee = async (employeeId) => {
+    try {
+      await deleteEmployeeFirebase(employeeId);
+      console.log('Data deleted successfully');
+      setIsOpen(!isOpen);
+      setTriggered(!triggered);
 
     } catch (error) {
       console.error('Deleted data:', error);
@@ -102,7 +124,10 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData }) => {
               {seats.slice(0, 10).map((item, i) => (
                 <li
                   key={i}
-                  className="mb-2 p-2 flex items-center justify-center  w-20 h-14 border-white border-2 text-white"
+                  className={`mb-2 p-2 flex items-center justify-center w-20 h-14 border-white border-2 text-white ${
+                    selectedSeat === i  ? 'bg-blue-500' : ''
+                  }`}                  onClick={() => handleSeatClick(i)}
+
                 >
                   <TbArmchair
                     color={
@@ -114,6 +139,7 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData }) => {
                     }
                     size={30}
                   />
+                  
                 </li>
               ))}
             </ul>
@@ -121,7 +147,11 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData }) => {
               {seats.slice(10, 20).map((item, i) => (
                 <li
                   key={i}
-                  className="mb-2 p-2 flex items-center justify-center  w-20 h-14 border-white border-2 text-white"
+                  className={`mb-2 p-2 flex items-center justify-center w-20 h-14 border-white border-2 text-white ${
+                    selectedSeat === i + 10 ? 'bg-blue-500' : ''
+                  }`}
+                  onClick={() => handleSeatClick(i + 10)}
+
                 >
                   <TbArmchair
                     color={
@@ -234,6 +264,10 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData }) => {
             placeholder={thirdData.salary}
             className="text-black p-2"
           />
+           <div className="flex justify-center gap-x-8">
+            
+            <button className="p-3 px-16 bg-red-800 mt-4" onClick={() => deleteEmployee(thirdData.employeeId)}>DELETE</button>
+            </div>
         </div>
       )}
 
@@ -266,6 +300,7 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData }) => {
             placeholder={fourthData.status}
             className="text-black p-2"
           />
+          
         </div>
       )}
     </div>

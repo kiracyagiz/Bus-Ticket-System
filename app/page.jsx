@@ -1,54 +1,93 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { cities } from "./references/cities";
-export default function Home() {
-  const [selectedDate, setSelectedDate] = useState("");
-  const [departureCity, setDepartureCity] = useState("");
-  const [arrivalCity, setArrivalCity] = useState("");
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { cities } from './references/cities';
+
+// Assuming you have the necessary icons from a library like React Icons
+import { FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
+
+const Home = () => {
+  const [selectedDate, setSelectedDate] = useState('');
+  const [departureCity, setDepartureCity] = useState('');
+  const [arrivalCity, setArrivalCity] = useState('');
 
   return (
-    <div className="flex justify-center items-center w-full">
-      <div className="flex justify-center mt-56  gap-x-4">
-        <input type="date" className="border-black border-2 p-3 text-lg" onChange={(e) => setSelectedDate(e.target.value)} />
+    <div className="flex justify-center items-center h-screen">
+      <div className="bg-white p-8 rounded-lg shadow-md">
+        <h1 className="text-3xl font-semibold mb-6">Find Your Bus Ticket</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Date Picker */}
+          <div className="mb-4">
+            <label htmlFor="date" className="text-sm text-gray-600 block mb-1">
+              <FaCalendarAlt className="inline-block mr-2" /> Select Date
+            </label>
+            <input
+              type="date"
+              id="date"
+              className="border border-gray-300 rounded-md p-2 w-full"
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </div>
 
-        <select
-          id="countries"
-          className="border-black border-2 p-3 text-lg"
-          onChange={(e) => setDepartureCity(e.target.value)}
-        >
-          <option selected>Choose a city</option>
-          {cities.map((city, index) => (
-            <option key={index}>{city}</option>
-          ))}
-        </select>
+          {/* Departure City */}
+          <div className="mb-4">
+            <label htmlFor="departureCity" className="text-sm text-gray-600 block mb-1">
+              <FaMapMarkerAlt className="inline-block mr-2" /> Departure City
+            </label>
+            <select
+              id="departureCity"
+              className="border border-gray-300 rounded-md p-2 w-full"
+              onChange={(e) => setDepartureCity(e.target.value)}
+            >
+              <option disabled selected>
+                Choose a city
+              </option>
+              {cities.map((city, index) => (
+                <option key={index}>{city}</option>
+              ))}
+            </select>
+          </div>
 
-        <select
-          id="countries"
-          className="border-black border-2 p-3 text-lg"
-          onChange={(e) => setArrivalCity(e.target.value)}
+          {/* Arrival City */}
+          <div className="mb-4">
+            <label htmlFor="arrivalCity" className="text-sm text-gray-600 block mb-1">
+              <FaMapMarkerAlt className="inline-block mr-2" /> Arrival City
+            </label>
+            <select
+              id="arrivalCity"
+              className="border border-gray-300 rounded-md p-2 w-full"
+              onChange={(e) => setArrivalCity(e.target.value)}
+            >
+              <option disabled selected>
+                Choose a city
+              </option>
+              {cities.map((city, index) => (
+                <option key={index}>{city}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Search Button */}
+        <Link
+          href={{
+            pathname: '/search',
+            query: {
+              departureCity: departureCity,
+              arrivalCity: arrivalCity,
+              rideDate: selectedDate,
+            },
+          }}
         >
-          <option selected>Choose a city</option>
-          {cities.map((city, index) => (
-            <option key={index}>{city}</option>
-          ))}
-        </select>
+          <p className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-md inline-block hover:bg-blue-600">
+            Find Tickets
+          </p>
+        </Link>
       </div>
-
-      <Link
-      className="mt-56 ml-8"
-        href={{
-          pathname: "/search",
-          query: {
-            departureCity: departureCity,
-            arrivalCity: arrivalCity,
-            rideDate: selectedDate,
-          },
-        }}
-      >
-        Go to Other Page
-      </Link>
     </div>
   );
-}
+};
+
+export default Home;
+
