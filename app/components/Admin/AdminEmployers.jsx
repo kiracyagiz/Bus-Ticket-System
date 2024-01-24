@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react'
 import { getEmployersData } from '@/app/collection'
 import { useRouter } from "next/navigation";
+import Sidebar from '../Sidebar';
 
 const AdminEmployers = ({searchParams}) => {
 
@@ -10,9 +11,13 @@ const AdminEmployers = ({searchParams}) => {
   const [employeeId,setEmployeeId] = useState('');
   const [hireDate,setHireDate] = useState('');
   const [salary,setSalary] = useState('');
+  const [isOpen,setIsOpen] = useState('')
+  const [selectedTicket,setSelectedTicket] = useState([])
 
-
-  
+  const toggleSidebar = (dt) => {
+    setIsOpen(!isOpen);
+    setSelectedTicket(dt)
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,7 +30,9 @@ const AdminEmployers = ({searchParams}) => {
     };
 
     fetchData();
-  }, [searchParams]);
+  }, [searchParams,employeeData]);
+
+
 
 
   useEffect(() => {
@@ -45,7 +52,7 @@ const AdminEmployers = ({searchParams}) => {
       </thead>
       <tbody>
         {employeeData && employeeData.map((dt, i) => (
-        <tr className="border-b dark:border-neutral-500 text-center" key={i} >
+        <tr className="border-b dark:border-neutral-500 text-center" key={i}  onClick={() => toggleSidebar(dt)}>
           <th className="whitespace-nowrap px-6 py-4">{dt.employeeId}</th>
           <th className="whitespace-nowrap px-6 py-4">{dt.hireDate}</th>
           <th className="whitespace-nowrap px-6 py-4">{dt.salary}</th>
@@ -59,6 +66,7 @@ const AdminEmployers = ({searchParams}) => {
        
       </tbody>
     </table>
+    <Sidebar thirdData={selectedTicket} isOpen={isOpen} setIsOpen={setIsOpen}/>
     </div>
   )
 }

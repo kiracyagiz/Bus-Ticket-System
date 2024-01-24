@@ -6,8 +6,10 @@ import {
   query,
   collection,
   where,
-  DocumentData,
-  addDoc
+  addDoc,
+  updateDoc,
+  doc,
+  getDoc
 } from "firebase/firestore";
 
 export const getTicket = async () => {
@@ -188,4 +190,98 @@ export const getAllTickets = async () => {
   }
 
 
+  export const updateTicketFireBase = async (ticketId, newData) => {
+    try {
+      const collectionRef = collection(db, 'busTickets');
+      const docRef = doc(collectionRef, ticketId);
   
+      const documentSnapshot = await getDoc(docRef);
+  
+      if (documentSnapshot.exists()) {
+        await updateDoc(docRef, newData);
+        console.log('Data updated successfully');
+      } else {
+        console.log('Document not found');
+      }
+    } catch (error) {
+      console.error('Error updating data:', error);
+    }
+  };
+  
+
+  export const deleteTicketFirebase = async (ticketId) => {
+    try {
+      const collectionRef = collection(db, 'busTickets');
+      const docRef = doc(collectionRef, ticketId);
+  
+      const documentSnapshot = await getDoc(docRef);
+  
+      if (documentSnapshot.exists()) {
+        await deleteDoc(docRef);
+        console.log('Document deleted successfully');
+      } else {
+        console.log('Document not found');
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error);
+    }
+  };
+
+
+  export const getBusData = async () => {
+    try {
+      const collectionRef = collection(db, "buses");
+      const querySnapshot = await getDocs(collectionRef);
+  
+      const busDataAray = [];
+      querySnapshot.forEach((doc) => {
+        const busData = doc.data();
+        busDataAray.push(busData);
+      });
+  
+      return busDataAray;
+    } catch (error) {
+      console.error("Belgeler alınamadı:", error);
+      return null; 
+    }
+  };
+
+  export const deleteEmployee = async (employeeId) => {
+    try {
+      const employeeCollectionRef = collection(db, 'employee');
+      const employeeDocRef = doc(employeeCollectionRef, employeeId);
+  
+      const employeeSnapshot = await getDoc(employeeDocRef);
+  
+      if (employeeSnapshot.exists()) {
+        await deleteDoc(employeeDocRef);
+  
+        await updateBusesWithEmployeeId(employeeId, 'not-selected');
+      } else {
+        console.log('Employee document not found');
+      }
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+    }
+  };
+
+
+  
+  const updateBusesWithEmployeeId = async (employeeId, newEmployeeId) => {
+    try {
+      const busesCollectionRef = collection(db, 'buses');
+      const q = query(busesCollectionRef, where('employeeId', '==', employeeId));
+      const querySnapshot = await getDocs(q);
+  
+      querySnapshot.forEach(async (busDoc) => {
+        const busData = busDoc.data();
+        const busDocRef = doc(busesCollectionRef, busDoc.id);
+  
+        await updateDoc(busDocRef, { employeeId: newEmployeeId });
+      });
+  
+      console.log('Buses collection updated successfully');
+    } catch (error) {
+      console.error('Error updating buses collection:', error);
+    }
+  };

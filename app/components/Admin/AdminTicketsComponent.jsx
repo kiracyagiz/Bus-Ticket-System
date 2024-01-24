@@ -19,6 +19,7 @@ const AdminTicketsComponent = ({searchParams}) => {
   const [departureTime,setSelectedDepartureTime] = useState('')
   const [departureCity,setSelectedDepartureCity] = useState('')
   const [arrivalTime,setSelectedArrivalTime] = useState('');
+  const [forceUpdate, setForceUpdate] = useState(0);
 
 
   // dmin?componentName=allTickets&arrivalCity=Durres&rideDate=2023-12-25
@@ -34,6 +35,8 @@ const AdminTicketsComponent = ({searchParams}) => {
 
 
 
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,6 +49,7 @@ const AdminTicketsComponent = ({searchParams}) => {
 
     fetchData();
   }, [searchParams]);
+
 
 
 
