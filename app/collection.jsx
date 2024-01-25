@@ -297,3 +297,21 @@ export const getAllTickets = async () => {
       return null;
     }
   };
+
+  export const getTicketInformationById = async (ticketInfoId) => {
+    try {
+      const ticketInfoDocRef = doc(db, "ticketInformation", ticketInfoId);
+      const ticketInfoDocSnapshot = await getDoc(ticketInfoDocRef);
+  
+      if (ticketInfoDocSnapshot.exists()) {
+        const ticketInfoData = ticketInfoDocSnapshot.data();
+        return ticketInfoData;
+      } else {
+        console.log(`Ticket information with ID ${ticketInfoId} not found`);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error retrieving ticket information:", error);
+      return null;
+    }
+  };

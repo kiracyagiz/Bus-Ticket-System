@@ -1,17 +1,18 @@
 "use client";
 
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { cities } from './references/cities';
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { cities } from "./references/cities";
 
 // Assuming you have the necessary icons from a library like React Icons
-import { FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 
 const Home = () => {
-  const [selectedDate, setSelectedDate] = useState('');
-  const [departureCity, setDepartureCity] = useState('');
-  const [arrivalCity, setArrivalCity] = useState('');
-
+  const [selectedDate, setSelectedDate] = useState("");
+  const [departureCity, setDepartureCity] = useState("");
+  const [arrivalCity, setArrivalCity] = useState("");
+  const [information,setInformattion] = useState('');
+  
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="bg-white p-8 rounded-lg shadow-md">
@@ -32,7 +33,10 @@ const Home = () => {
 
           {/* Departure City */}
           <div className="mb-4">
-            <label htmlFor="departureCity" className="text-sm text-gray-600 block mb-1">
+            <label
+              htmlFor="departureCity"
+              className="text-sm text-gray-600 block mb-1"
+            >
               <FaMapMarkerAlt className="inline-block mr-2" /> Departure City
             </label>
             <select
@@ -51,7 +55,10 @@ const Home = () => {
 
           {/* Arrival City */}
           <div className="mb-4">
-            <label htmlFor="arrivalCity" className="text-sm text-gray-600 block mb-1">
+            <label
+              htmlFor="arrivalCity"
+              className="text-sm text-gray-600 block mb-1"
+            >
               <FaMapMarkerAlt className="inline-block mr-2" /> Arrival City
             </label>
             <select
@@ -72,7 +79,7 @@ const Home = () => {
         {/* Search Button */}
         <Link
           href={{
-            pathname: '/search',
+            pathname: "/search",
             query: {
               departureCity: departureCity,
               arrivalCity: arrivalCity,
@@ -84,10 +91,37 @@ const Home = () => {
             Find Tickets
           </p>
         </Link>
+
+        <div className="flex flex-col py-2">
+          <label
+            htmlFor="textInput"
+            className="mb-2 text-gray-600 font-semibold"
+          >
+            Check your bus information with your ticket id:
+          </label>
+          <input
+            type="text"
+            id="textInput"
+            onChange={(e)=> setInformattion(e.target.value)}
+            name="textInput"
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+            placeholder="Type here..."
+          />
+        </div>
+        <Link
+         href={`/ticketInfo/${information}`}
+        >
+        <button
+          className=
+          "bg-gray-800w-full mt-8 text-white font-semibold p-2"
+        >
+          Buy
+        </button>
+        </Link>
+      
       </div>
     </div>
   );
 };
 
 export default Home;
-

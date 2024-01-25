@@ -32,7 +32,8 @@ const Checkout = ({ searchParams }) => {
     try {
       const newTicketInfoId = await addTicketInformation(ticketInfoFormData);
       console.log(`New ticket information added with ID: ${newTicketInfoId}`);
-      router.push('/history')
+      router.push(`/ticketInfo/${newTicketInfoId}`);
+
 
       
     } catch (error) {
