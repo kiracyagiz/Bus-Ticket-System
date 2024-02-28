@@ -15,7 +15,7 @@ const ConfigureSidebar = ({isOpen,setIsOpen,toggleSuitable,buttons}) => {
     </button>
     <div className="flex  flex-col mt-4 justify-center ">
         {buttons.map((dt,i) => (
-             <div>
+             <div key={i}>
                 {dt.suitable ? '' : <p onClick={()=> toggleSuitable(i)}>{dt.title}</p>}
              </div>
         ))}

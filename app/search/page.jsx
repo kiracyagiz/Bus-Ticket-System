@@ -21,7 +21,7 @@ export default function Search({ searchParams }) {
   return (
     <div className="flex flex-col gap-y-4 text-center justify-center items-center">
        {tickets.map((dt,i)=> (
-        <div className="border p-4 m-4 w-1/2 shadow-md rounded-md">
+        <div className="border p-4 m-4 w-1/2 shadow-md rounded-md" key={i}>
         <h2 className="text-xl font-bold mb-2">{dt.route}</h2>
         <p>
           <span className="font-semibold">Departure:</span> {dt.departureCity} at {dt.departureTime}

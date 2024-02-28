@@ -52,7 +52,7 @@ const AdminDefaultComponent = () => {
 
         <div className='flex flex-wrap w-2/4   gap-4 justify-center items-center'>
         {buttons.map((dt,i)=> (
-          <div className='w-48 h-28'>
+          <div className='w-48 h-28' key={i}>
           {dt.suitable && 
             <Link
             href={isOpen ? 
