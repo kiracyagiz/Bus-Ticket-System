@@ -88,7 +88,7 @@ const Home = () => {
           }}
         >
           <p className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-md inline-block hover:bg-blue-600">
-            Find Tickets
+            Find Ticket
           </p>
         </Link>
 
@@ -113,9 +113,9 @@ const Home = () => {
         >
         <button
           className=
-          "bg-gray-800w-full mt-8 text-white font-semibold p-2"
+          "bg-blue-400 mt-8 text-white font-semibold p-2"
         >
-          Buy
+          Find Information About Your Booking Ticket
         </button>
         </Link>
       

@@ -96,7 +96,7 @@ const AdminTableComponent = () => {
         <option >550 Leke</option>
 
       </select>
-      <button className="bg-blue-400 p-4" onClick={() => fetchData(newTicketData)}>SEND THE DATAAA</button>
+      <button className="bg-blue-400 p-4" onClick={() => fetchData(newTicketData)}>Add Ticket</button>
     </div>
   );
 };
