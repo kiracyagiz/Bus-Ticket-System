@@ -20,7 +20,9 @@ export default function Search({ searchParams }) {
 
   return (
     <div className="flex flex-col gap-y-4 text-center justify-center items-center">
-       {tickets.map((dt,i)=> (
+   {tickets ? 
+   
+  tickets.map((dt,i)=> (
         <div className="border p-4 m-4 w-1/2 shadow-md rounded-md" key={i}>
         <h2 className="text-xl font-bold mb-2">{dt.route}</h2>
         <p>
@@ -47,7 +49,10 @@ export default function Search({ searchParams }) {
         </button>
          </Link>
       </div>
-       ))}
+       ))
+
+       : <div>Data Not Found</div>
+   }
     </div>
   );
 }

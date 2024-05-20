@@ -9,7 +9,7 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData ,setTri
 
   const handleSeatClick = (seatId) => {
 
-    if (dt[0].seats[seatId] !== 'man' && dt[0].seats[seatId] !== 'woman') {
+    if (dt[0].seats[seatId] !== 'Male' && dt[0].seats[seatId] !== 'Female') {
       setSelectedSeat(seatId)
       
     }
@@ -131,9 +131,9 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData ,setTri
                 >
                   <TbArmchair
                     color={
-                      item === "man"
+                      item === "Male"
                         ? "blue"
-                        : item === "woman"
+                        : item === "Female" 
                         ? "red"
                         : "white"
                     }
@@ -155,9 +155,9 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData ,setTri
                 >
                   <TbArmchair
                     color={
-                      item === "man"
+                      item === "Male"
                         ? "blue"
-                        : item === "woman"
+                        : item === "Female"
                         ? "red"
                         : "white"
                     }
@@ -246,10 +246,10 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData,fourthData ,setTri
           <button onClick={toggleSidebar} className="mb-4">
             Close Window
           </button>
-          <label className="mb-2">Employee ID</label>
+          <label className="mb-2">First Name</label>
           <input
             type="text"
-            placeholder={thirdData.employeeId}
+            placeholder={thirdData.firstName}
             className="text-black p-2"
           />
           <label className="my-2">Hire Date</label>

@@ -16,7 +16,10 @@ function Login() {
     }
     
     
-  }, []);
+    
+  }, [user]);
+
+  console.log(user,'useri2')
 
   const [data, setData] = useState({
     email: '',

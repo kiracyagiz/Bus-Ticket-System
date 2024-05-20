@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import React from "react";
+import React, { useEffect } from "react";
 import { AuthContextProvider, useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
 import AdminSideBar from "../components/AdminSideBar";
@@ -10,12 +10,19 @@ import AdminTableComponent from "../components/Admin/AdminTableComponent";
 import AdminDefaultComponent from "../components/Admin/AdminDefaultComponent";
 import AdminEmployers from "../components/Admin/AdminEmployers";
 import AdminBuses from "../components/Admin/AdminBuses";
+
 function Admin({ params }) {
   const router = useRouter();
-
-  const { logOut } = useAuth();
+  const { user, logOut } = useAuth();
   const searchParams = useSearchParams();
   const search = searchParams.get("componentName");
+
+
+  useEffect(() => {
+    if (!user || !user.uid) {
+      router.push("/");
+    }
+  }, [user, router]);
 
   const logoutHandler = async () => {
     try {
@@ -30,30 +37,31 @@ function Admin({ params }) {
 
   switch (search) {
     case "allTickets":
-      renderedComponent = <AdminTicketsComponent  searchParams={searchParams} router={router}/>;
+      renderedComponent = <AdminTicketsComponent searchParams={searchParams} router={router} />;
       break;
     case "table":
       renderedComponent = <AdminTableComponent />;
       break;
-    case "monthlyTickets": 
-      renderedComponent = <AdminTicketsComponent/>;
+    case "monthlyTickets":
+      renderedComponent = <AdminTicketsComponent />;
       break;
     case "allEmployers":
-    renderedComponent = <AdminEmployers searchParams={searchParams}/>;
-    break;
+      renderedComponent = <AdminEmployers searchParams={searchParams} />;
+      break;
     case "allBuses":
-       renderedComponent = <AdminBuses/>
-    break; 
-    
+      renderedComponent = <AdminBuses />;
+      break;
     default:
-        renderedComponent = <AdminDefaultComponent />;
-
+      renderedComponent = <AdminDefaultComponent />;
   }
 
   return (
     <div className="flex bg-gray-200">
       <AdminSideBar logoutHandler={logoutHandler} />
+      <div className="flex  mx-auto min-h-screen">
       <div className="flex justify-center mx-auto min-h-screen ">{renderedComponent}</div>
+      </div>
+   
     </div>
   );
 }

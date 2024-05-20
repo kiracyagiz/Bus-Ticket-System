@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { addTicketInformation, getCheckoutTicket } from "../collection";
+import { addTicketInformation, getCheckoutTicket, updateSeatData } from "../collection";
 import Sidebar from "../components/Sidebar";
 import { FaBus ,FaSuitcase } from "react-icons/fa";
 import { popularCitizenships,checkoutTypes } from "../references/cities";
@@ -30,17 +30,20 @@ const Checkout = ({ searchParams }) => {
 
   const handleTicketInfoFormSubmit = async (ticketInfoFormData) => {
     try {
+      // Update seat data first
+      await updateSeatData(
+        searchParams.selectedTicket, // Assuming ticketData[0] contains the ticket ID
+        selectedSeat, // Use selectedSeat
+        formData.gender // Use gender from form data
+      );
+
+      // Then, add ticket information
       const newTicketInfoId = await addTicketInformation(ticketInfoFormData);
       console.log(`New ticket information added with ID: ${newTicketInfoId}`);
-      router.push(`/ticketInfo/${newTicketInfoId}`);
-
-
-      
     } catch (error) {
       console.error("Error adding ticket information:", error);
     }
   };
-
   useEffect(() => {
     setFormData((prevData) => ({
       ...prevData,

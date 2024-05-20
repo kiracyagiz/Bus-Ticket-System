@@ -10,7 +10,7 @@ const AdminSideBar = ({logoutHandler}) => {
         router.push(plex)
     }
   return (
-    <nav className="w-28 h-[100vh] bg-gray-800 fixed text-white p-4 gap-y-16 flex flex-col items-center text-center" >
+    <nav className="h-[100vh] bg-gray-800 fixed text-white p-4 gap-y-16 flex flex-col items-center text-center" >
     <div className="mb-4 cursor-pointer  flex flex-col items-center " onClick={() => navigateTo('/admin')}>
       <FaHome size={35} />
       <span className="mt-1 text-xs">Profile</span>

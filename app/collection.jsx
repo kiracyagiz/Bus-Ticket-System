@@ -10,7 +10,8 @@ import {
   updateDoc,
   doc,
   getDoc,
-  deleteDoc
+  deleteDoc,
+  setDoc
 } from "firebase/firestore";
 
 export const getTicket = async () => {
@@ -59,77 +60,83 @@ export const getSelectedTicket = async (searchParams) => {
 };
 
 
-export const getEmployersData = async(searchParams) => {
+export const getEmployersData = async (searchParams, uid) => {
   try {
     const employeeId = searchParams.get('employeeId');
     const hireDate = searchParams.get('hireDate');
     const salary = searchParams.get('salary');
 
-    const collectionRef = collection(db,'employee');
+    const collectionRef = collection(db, 'employee');
 
     let q = collectionRef;
 
-    if(employeeId && employeeId.length > 0 ){
-      q = query(q,where('employeeId','==',employeeId))
+    if (employeeId && employeeId.length > 0) {
+      q = query(q, where('employeeId', '==', employeeId));
     }
-    if(hireDate && hireDate.length > 0 )
-    {
-      q = query(q,where('hireDate','==',hireDate))
+    if (hireDate && hireDate.length > 0) {
+      q = query(q, where('hireDate', '==', hireDate));
     }
-    if(salary && salary.length > 0){
-      q = query(q,where('salary','==',salary))
+    if (salary && salary.length > 0) {
+      q = query(q, where('salary', '==', salary));
     }
+
     const querySnapshot = await getDocs(q);
 
     const employeeData = [];
     querySnapshot.forEach((doc) => {
       const employeData = doc.data();
-      const ticketWithId = { ...employeData, id: doc.id };
-      employeeData.push(ticketWithId);
+      // Check if the companyId matches the provided UID
+      if (employeData.companyId === uid) {
+        const ticketWithId = { ...employeData, id: doc.id };
+        employeeData.push(ticketWithId);
+      }
     });
     return employeeData;
   } catch (error) {
     console.error("Belgeler alınamadı:", error);
     return null;
   }
-}
+};
 
 
-export const getFilteredData = async (searchParams) => {
+
+export const getFilteredData = async (searchParams, uid) => {
   try {
-       const arrivalCity = searchParams.get('arrivalCity')
-       const departureCity = searchParams.get('departureCity')
-       const departureTime = searchParams.get('departureTime')
-       const rideDate = searchParams.get('rideDate')
-       const arrivalTime = searchParams.get('arrivalTime');
-      //  console.log(departureCity,'myDepartureCity')
-       const collectionRef = collection(db, "busTickets");
-       let q = collectionRef;
-   
-       if (arrivalCity && arrivalCity.length > 0) {
-        q = query(q, where("arrivalCity", "==", arrivalCity));
-      } 
-      if(arrivalTime && arrivalTime.length > 0){
-        q = query(q,where('arrivalTime','==',arrivalTime));
-      }
-  
-      if (departureCity && departureCity.length > 0) {
-        q = query(q, where("departureCity", "==", departureCity));
-      }
-      if (departureTime) {
-        q = query(q, where("departureTime", "==", departureTime));
-      } 
-      if (rideDate && rideDate.length > 0) {
-        q = query(q, where("rideDate", "==", rideDate));
-      } 
-     
+    const arrivalCity = searchParams.get('arrivalCity');
+    const departureCity = searchParams.get('departureCity');
+    const departureTime = searchParams.get('departureTime');
+    const rideDate = searchParams.get('rideDate');
+    const arrivalTime = searchParams.get('arrivalTime');
+    
+    const collectionRef = collection(db, "busTickets");
+    let q = collectionRef;
+
+    if (arrivalCity && arrivalCity.length > 0) {
+      q = query(q, where("arrivalCity", "==", arrivalCity));
+    } 
+    if (arrivalTime && arrivalTime.length > 0) {
+      q = query(q, where('arrivalTime', '==', arrivalTime));
+    }
+    if (departureCity && departureCity.length > 0) {
+      q = query(q, where("departureCity", "==", departureCity));
+    }
+    if (departureTime && departureTime.length > 0) {
+      q = query(q, where("departureTime", "==", departureTime));
+    } 
+    if (rideDate && rideDate.length > 0) {
+      q = query(q, where("rideDate", "==", rideDate));
+    } 
+    
     const querySnapshot = await getDocs(q);
 
     const ticketDataArray = [];
     querySnapshot.forEach((doc) => {
       const ticketData = doc.data();
-      const ticketWithId = { ...ticketData, id: doc.id };
-      ticketDataArray.push(ticketWithId);
+      // Check if the companyId matches the provided UID
+      if (ticketData.companyId === uid) {
+        const ticketWithId = { ...ticketData, id: doc.id };
+        ticketDataArray.push(ticketWithId);
+      }
     });
     return ticketDataArray;
   } catch (error) {
@@ -137,6 +144,7 @@ export const getFilteredData = async (searchParams) => {
     return null;
   }
 };
+
 
 
 export const getCheckoutTicket = async (searchParams) => {
@@ -159,6 +167,30 @@ export const getCheckoutTicket = async (searchParams) => {
   }
 };
 
+
+export const updateSeatData = async (ticketId, seatIndex, gender) => {
+  try {
+    const ticketRef = doc(db, "busTickets", ticketId);
+    const ticketSnapshot = await getDoc(ticketRef);
+    if (ticketSnapshot.exists()) {
+      const ticketData = ticketSnapshot.data();
+      if (ticketData && ticketData.seats && seatIndex >= 0 && seatIndex < ticketData.seats.length) {
+        const updatedSeats = [...ticketData.seats]; // Copy the existing seats array
+        updatedSeats[seatIndex] = gender; // Update the selected seat with the gender
+        await setDoc(ticketRef, { seats: updatedSeats }, { merge: true });
+        console.log(`Seat data updated for ticket with ID ${ticketId}`);
+      } else {
+        console.error("Invalid ticket data or seat index out of range.");
+      }
+    } else {
+      console.error("Ticket document not found.");
+    }
+  } catch (error) {
+    console.error("Error updating seat data:", error);
+  }
+};
+
+
 export const getAllTickets = async () => {
     try {
       const collectionRef = collection(db, "busTickets");
@@ -172,6 +204,26 @@ export const getAllTickets = async () => {
         ticketDataArray.push(ticketWithId);
       });
       return ticketDataArray;
+    } catch (error) {
+      console.error("Belgeler alınamadı:", error);
+      return null;
+    }
+  };
+
+
+  export const getCompanies = async () => {
+    try {
+      const collectionRef = collection(db, "companies");
+      const q = query(collectionRef);
+      const querySnapshot = await getDocs(q);
+  
+      const companyDataArray = [];
+      querySnapshot.forEach((doc) => {
+        const companyData = doc.data();
+        const companyWithId = { ...companyData, id: doc.id };
+        companyDataArray.push(companyWithId);
+      });
+      return companyDataArray;
     } catch (error) {
       console.error("Belgeler alınamadı:", error);
       return null;
