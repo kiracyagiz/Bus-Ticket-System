@@ -79,6 +79,67 @@ const AdminTableComponent = () => {
     }
   };
 
+  const handleRandomTickets = async () => {
+    const startDate = new Date(); // Start from today
+    const endDate = new Date();
+    endDate.setDate(startDate.getDate() + 90); // End after 90 days
+
+    const ticketPromises = [];
+
+    // Loop through each day
+    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+      const formattedDate = date.toISOString().slice(0, 10); // Format date as YYYY-MM-DD
+      const ticketsForDay = generateRandomTickets(formattedDate);
+      
+      // Add each ticket for the day
+      ticketsForDay.forEach(ticketData => {
+        ticketPromises.push(addTicket(ticketData));
+      });
+    }
+
+    try {
+      await Promise.all(ticketPromises);
+      toast.success("Random tickets added successfully for 90 days.");
+    } catch (error) {
+      console.error("Error adding random tickets:", error);
+      toast.error("Error adding random tickets.");
+    }
+  };
+
+  const generateRandomTickets = (date) => {
+    const departureCities = ["Tirana", "Durres"];
+    const arrivalCities = ["Tirana", "Durres"];
+    const departureTimes = ["09:00", "13:00", "15:00", "18:00"];
+    const arrivalTimes = ["09:10", "10:10", "14:10", "16:10", "19:10"];
+    const prices = ["500 Leke", "550 Leke"];
+
+    const tickets = [];
+
+    for (let i = 0; i < 5; i++) {
+      const departureCity = departureCities[Math.floor(Math.random() * departureCities.length)];
+      const arrivalCity = arrivalCities[Math.floor(Math.random() * arrivalCities.length)];
+      const departureTime = departureTimes[Math.floor(Math.random() * departureTimes.length)];
+      const arrivalTime = arrivalTimes[Math.floor(Math.random() * arrivalTimes.length)];
+      const price = prices[Math.floor(Math.random() * prices.length)];
+
+      const ticketData = {
+        route: `${departureCity}-${arrivalCity}`,
+        departureCity: departureCity,
+        departureTime: departureTime,
+        arrivalCity: arrivalCity,
+        arrivalTime: arrivalTime,
+        price: price,
+        rideDate: date,
+        seats: seats,
+        companyId: user.uid,
+      };
+
+      tickets.push(ticketData);
+    }
+
+    return tickets;
+  };
+
   return (
     <>
       <ToastContainer />
@@ -95,61 +156,18 @@ const AdminTableComponent = () => {
               placeholder="Select Date"
               className="input-field border rounded-md px-4 py-2 border-black appearance-none"
             />
-            <select
-              value={departureCity}
-              onChange={(e) => setDepartureCity(e.target.value)}
-              className="input-field border rounded-md px-4 py-2 border-black appearance-none"
-            >
-              <option value="">Departure City</option>
-              <option value="Tirana">Tirana</option>
-              <option value="Durres">Durres</option>
-            </select>
-            <select
-              value={departureTime}
-              onChange={(e) => setDepartureTime(e.target.value)}
-              className="input-field border rounded-md px-4 py-2 border-black appearance-none"
-            >
-              <option value="">Departure Time</option>
-              <option value="09:00">09:00</option>
-              <option value="13:00">13:00</option>
-              <option value="15:00">15:00</option>
-              <option value="18:00">18:00</option>
-            </select>
-            <select
-              value={arrivalCity}
-              onChange={(e) => setArrivalCity(e.target.value)}
-              className="input-field border rounded-md px-4 py-2 border-black appearance-none"
-            >
-              <option value="">Arrival City</option>
-              <option value="Tirana">Tirana</option>
-              <option value="Durres">Durres</option>
-            </select>
-            <select
-              value={arrivalTime}
-              onChange={(e) => setArrivalTime(e.target.value)}
-              className="input-field border rounded-md px-4 py-2 border-black appearance-none"
-            >
-              <option value="">Arrival Time</option>
-              <option value="09:10">09:10</option>
-              <option value="10:10">10:10</option>
-              <option value="14:10">14:10</option>
-              <option value="16:10">16:10</option>
-              <option value="19:10">19:10</option>
-            </select>
-            <select
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="input-field border rounded-md px-4 py-2 border-black appearance-none"
-            >
-              <option value="">Price</option>
-              <option value="500 Leke">500 Leke</option>
-              <option value="550 Leke">550 Leke</option>
-            </select>
+            {/* Other input fields */}
             <button
               className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-300"
               onClick={handleSubmit}
             >
               Add Ticket
+            </button>
+            <button
+              className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors duration-300"
+              onClick={handleRandomTickets}
+            >
+              Add Random Tickets
             </button>
           </div>
         </div>

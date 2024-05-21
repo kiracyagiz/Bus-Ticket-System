@@ -1,19 +1,20 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import Sidebar from "../Sidebar";
 import { useAuth } from "@/app/context/AuthContext";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 import { getFilteredData } from "@/app/collection";
+import { Table, Button, Select, DatePicker } from "antd";
 import { useRouter } from "next/navigation";
+
+const { Option } = Select;
 
 const AdminTicketsComponent = ({ searchParams }) => {
   const { user } = useAuth();
   const route = useRouter();
 
   const [tickets, setTickets] = useState([]);
-  const [selectedTicket, setSelectedTicket] = useState([]);
+  const [selectedTicket, setSelectedTicket] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
@@ -77,54 +78,55 @@ const AdminTicketsComponent = ({ searchParams }) => {
     );
   }, [selectedCity, selectedDate, departureCity, departureTime, arrivalTime]);
 
-  return (
-    <div className="flex gap-x-8 py-8 relative ">
-      <div>
-      <button onClick={exportToExcel} data-ripple-light="true" data-dialog-target="dialog"
-  class="select-none rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-  Export Excel
-</button>
-      </div>
-      <table className=" text-left lg:min-w-4/5 bg-white text-sm font-light border-collapse border-2 border-slate-400">
-        <thead className="border-b font-medium dark:border-neutral-500 text-center">
-          <tr>
-            <th className="px-6 py-4 ">Route</th>
-            <th className="px-6 py-4 ">Departure City</th>
-            <th className="px-6 py-4 ">Departure Time</th>
-            <th className="px-6 py-4 ">Arrival Time</th>
-            <th className="px-6 py-4 ">Arrival City</th>
-            <th className="px-6 py-4 ">Price</th>
-            <th className="px-6 py-4 ">Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tickets &&
-            tickets.map((dt, i) => (
-              <tr
-                className="border-b dark:border-neutral-500 text-center"
-                key={i}
-                onClick={() => toggleSidebar(dt)}
-              >
-                <th className="whitespace-nowrap px-6 py-4">{dt.route}</th>
-                <th className="whitespace-nowrap px-6 py-4">
-                  {dt.departureCity}
-                </th>
-                <th className="whitespace-nowrap px-6 py-4">
-                  {dt.departureTime}
-                </th>
-                <th className="whitespace-nowrap px-6 py-4">
-                  {dt.arrivalTime}
-                </th>
-                <th className="whitespace-nowrap px-6 py-4">
-                  {dt.arrivalCity}
-                </th>
-                <th className="whitespace-nowrap px-6 py-4">{dt.price}</th>
-                <th className="whitespace-nowrap px-6 py-4">{dt.rideDate}</th>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+  const columns = [
+    {
+      title: "Route",
+      dataIndex: "route",
+      key: "route",
+    },
+    {
+      title: "Departure City",
+      dataIndex: "departureCity",
+      key: "departureCity",
+    },
+    {
+      title: "Departure Time",
+      dataIndex: "departureTime",
+      key: "departureTime",
+    },
+    {
+      title: "Arrival Time",
+      dataIndex: "arrivalTime",
+      key: "arrivalTime",
+    },
+    {
+      title: "Arrival City",
+      dataIndex: "arrivalCity",
+      key: "arrivalCity",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Date",
+      dataIndex: "rideDate",
+      key: "rideDate",
+    },
+  ];
 
+  return (
+    <div className="flex gap-x-8 py-8 ">
+      <Button onClick={exportToExcel}>Export</Button>
+      <Table
+        dataSource={tickets}
+        columns={columns}
+        rowKey={(record) => record.key}
+        onRow={(record) => ({
+          onClick: () => toggleSidebar(record),
+        })}
+      />
       <Sidebar
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -135,64 +137,64 @@ const AdminTicketsComponent = ({ searchParams }) => {
 
       <div className=" bg-white border-slate-400 border-2 w-1/2 min-w-1/2 max-w-1/2 text-center p-4 flex flex-col gap-y-8 h-full text-black">
         <p>Select Departure City</p>
-        <select
-          name=""
-          id=""
-          className="w-full"
-          onChange={(e) => setSelectedDepartureCity(e.target.value)}
+        <Select
+          defaultValue=""
+          style={{ width: "100%" }}
+          onChange={(value) => setSelectedDepartureCity(value)}
         >
-          <option value="">Select Ticket</option>
-          <option value="Tirana">Tirana</option>
-          <option value="Durres">Durres</option>
-        </select>
+          <Option value="">Select Ticket</Option>
+          <Option value="Tirana">Tirana</Option>
+          <Option value="Durres">Durres</Option>
+        </Select>
 
         <p>Select Arrival City</p>
-        <select
-          name=""
-          id=""
-          className="w-full"
-          onChange={(e) => setSelectedCity(e.target.value)}
+        <Select
+          defaultValue=""
+          style={{ width: "100%" }}
+          onChange={(value) => setSelectedCity(value)}
         >
-          <option value="">Select Ticket</option>
-          <option value="Tirana">Tirana</option>
-          <option value="Durres">Durres</option>
-        </select>
+          <Option value="">Select Ticket</Option>
+          <Option value="Tirana">Tirana</Option>
+          <Option value="Durres">Durres</Option>
+        </Select>
 
         <p>Select Ride Date</p>
-        <input type="date" onChange={(e) => setSelectedDate(e.target.value)} />
-        <p className="my-4 ">Select Departure Time</p>
-        <select
-          name=""
-          id=""
-          className="w-full"
-          onChange={(e) => setSelectedDepartureTime(e.target.value)}
-        >
-          <option value="">Not Selected</option>
-          <option value="08:00">08:00</option>
-          <option value="09:00">09:00</option>
-          <option value="10:00">10:00</option>
-          <option value="13:00">13:00</option>
-          <option value="15:00">15:00</option>
-          <option value="18:00">18:00</option>
-        </select>
+        <DatePicker onChange={(date, dateString) => setSelectedDate(dateString)} />
 
-        <p className="my-4 ">Select Arrival Time</p>
-        <select
-          name=""
-          id=""
-          className="w-full"
-          onChange={(e) => setSelectedArrivalTime(e.target.value)}
+        <p className="my-4">Select Departure Time</p>
+        <Select
+          defaultValue=""
+          style={{ width: "100%" }}
+          onChange={(value) => setSelectedDepartureTime(value)}
         >
-          <option value="">Not Selected</option>
-          <option value="09:10">09:10</option>
-          <option value="10:10">10:10</option>
-          <option value="11:10">11:10</option>
-          <option value="14:10">14:10</option>
-          <option value="19:10">19:10</option>
-        </select>
+          <Option value="">Not Selected</Option>
+          <Option value="08:00">08:00</Option>
+          <Option value="09:00">09:00</Option>
+          <Option value="10:00">10:00</Option>
+          <Option value="13:00">13:00</Option>
+          <Option value="15:00">15:00</Option>
+          <Option value="18:00">18:00</Option>
+        </Select>
+
+        <p className="my-4">Select Arrival Time</p>
+        <Select
+          defaultValue=""
+          style={{ width: "100%" }}
+          onChange={(value) => setSelectedArrivalTime(value)}
+        >
+          <Option value="">Not Selected</Option>
+          <Option value="09:10">09:10</Option>
+          <Option value="10:10">10:10</Option>
+          <Option value="11:10">11:10</Option>
+          <Option value="14:10">14:10</Option>
+          <Option value="19:10">19:10</Option>
+        </Select>
       </div>
 
-   
+      <label
+        htmlFor="tw-modal"
+        className="pointer-events-none invisible fixed inset-0 flex cursor-pointer items-center justify-center overflow-hidden  overscroll-contain bg-slate-700/30 opacity-0 transition-all duration-200 ease-in-out peer-checked:visible peer"
+      ></label>
     </div>
   );
 };

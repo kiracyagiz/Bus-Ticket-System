@@ -52,7 +52,7 @@ function Admin({ params }) {
       renderedComponent = <AdminBuses />;
       break;
     default:
-      renderedComponent = <AdminDefaultComponent />;
+      renderedComponent = <AdminDefaultComponent/>
   }
 
   return (
