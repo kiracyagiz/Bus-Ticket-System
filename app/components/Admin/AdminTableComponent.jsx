@@ -4,9 +4,13 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Form, Button, Select, DatePicker, Card, Typography, Row, Col } from 'antd';
+
+const { Title } = Typography;
+const { Option } = Select;
 
 const AdminTableComponent = () => {
-  const [selectDate, setSelectedDate] = useState("");
+  const [selectDate, setSelectedDate] = useState(null);
   const [departureCity, setDepartureCity] = useState("");
   const [departureTime, setDepartureTime] = useState("");
   const [arrivalCity, setArrivalCity] = useState("");
@@ -17,37 +21,19 @@ const AdminTableComponent = () => {
   const { user } = useAuth();
 
   const seats = [
-    "Male",
-    "Female",
-    "Male",
-    "Male",
-    " ",
-    "Female",
-    "Male",
-    " ",
-    "Female",
-    " ",
-    " ",
-    "Male",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    "",
+    "Male", "Female", "Male", "Male", " ", "Female", "Male", " ", "Female", " ", " ",
+    "Male", " ", " ", " ", " ", " ", " ", " ", ""
   ];
 
   const newTicketData = {
-    route: departureCity + "-" + arrivalCity,
-    departureCity: departureCity,
-    departureTime: departureTime,
-    arrivalTime: arrivalTime,
-    arrivalCity: arrivalCity,
-    price: price,
-    rideDate: selectDate,
-    seats: seats,
+    route: `${departureCity}-${arrivalCity}`,
+    departureCity,
+    departureTime,
+    arrivalTime,
+    arrivalCity,
+    price,
+    rideDate: selectDate ? selectDate.format('YYYY-MM-DD') : "",
+    seats,
     companyId: user.uid,
   };
 
@@ -61,116 +47,134 @@ const AdminTableComponent = () => {
       if (!arrivalTime) errorMessage += "Arrival Time, ";
       if (!price) errorMessage += "Price, ";
       errorMessage = errorMessage.slice(0, -2); // Remove the last comma and space
-      toast.error(errorMessage); 
+      toast.error(errorMessage);
       return;
     }
 
     try {
       await addTicket(newTicketData);
       toast.success('New ticket added successfully');
-      setSelectedDate("");
+      setSelectedDate(null);
       setDepartureCity("");
       setDepartureTime("");
       setArrivalCity("");
       setArrivalTime("");
       setPrice("");
     } catch (error) {
-      console.error("Error fetching tickets:", error);
+      console.error("Error adding ticket:", error);
     }
-  };
-
-  const handleRandomTickets = async () => {
-    const startDate = new Date(); // Start from today
-    const endDate = new Date();
-    endDate.setDate(startDate.getDate() + 90); // End after 90 days
-
-    const ticketPromises = [];
-
-    // Loop through each day
-    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
-      const formattedDate = date.toISOString().slice(0, 10); // Format date as YYYY-MM-DD
-      const ticketsForDay = generateRandomTickets(formattedDate);
-      
-      // Add each ticket for the day
-      ticketsForDay.forEach(ticketData => {
-        ticketPromises.push(addTicket(ticketData));
-      });
-    }
-
-    try {
-      await Promise.all(ticketPromises);
-      toast.success("Random tickets added successfully for 90 days.");
-    } catch (error) {
-      console.error("Error adding random tickets:", error);
-      toast.error("Error adding random tickets.");
-    }
-  };
-
-  const generateRandomTickets = (date) => {
-    const departureCities = ["Tirana", "Durres"];
-    const arrivalCities = ["Tirana", "Durres"];
-    const departureTimes = ["09:00", "13:00", "15:00", "18:00"];
-    const arrivalTimes = ["09:10", "10:10", "14:10", "16:10", "19:10"];
-    const prices = ["500 Leke", "550 Leke"];
-
-    const tickets = [];
-
-    for (let i = 0; i < 5; i++) {
-      const departureCity = departureCities[Math.floor(Math.random() * departureCities.length)];
-      const arrivalCity = arrivalCities[Math.floor(Math.random() * arrivalCities.length)];
-      const departureTime = departureTimes[Math.floor(Math.random() * departureTimes.length)];
-      const arrivalTime = arrivalTimes[Math.floor(Math.random() * arrivalTimes.length)];
-      const price = prices[Math.floor(Math.random() * prices.length)];
-
-      const ticketData = {
-        route: `${departureCity}-${arrivalCity}`,
-        departureCity: departureCity,
-        departureTime: departureTime,
-        arrivalCity: arrivalCity,
-        arrivalTime: arrivalTime,
-        price: price,
-        rideDate: date,
-        seats: seats,
-        companyId: user.uid,
-      };
-
-      tickets.push(ticketData);
-    }
-
-    return tickets;
   };
 
   return (
     <>
       <ToastContainer />
-      <div className="min-h-screen w-screen flex mx-auto justify-center items-center bg-gray-100">
-        <div className="p-8 w-3/4 bg-white rounded shadow-lg ">
-          <h2 className="text-3xl font-semibold text-center mb-6">
+      <div
+        className="py-4 w-screen flex justify-center items-center"
+   
+      >
+        <Card style={{ width: 400 }}>
+          <Title level={3} className="text-center mb-2">
             Add New Ticket
-          </h2>
-          <div className="space-y-4 flex flex-col gap-8">
-            <input
-              type="date"
-              value={selectDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              placeholder="Select Date"
-              className="input-field border rounded-md px-4 py-2 border-black appearance-none"
-            />
-            {/* Other input fields */}
-            <button
-              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-300"
-              onClick={handleSubmit}
-            >
-              Add Ticket
-            </button>
-            <button
-              className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors duration-300"
-              onClick={handleRandomTickets}
-            >
-              Add Random Tickets
-            </button>
-          </div>
-        </div>
+          </Title>
+          <Form layout="vertical" onFinish={handleSubmit}>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label="Select Date" required>
+                  <DatePicker
+                    value={selectDate}
+                    onChange={setSelectedDate}
+                    style={{ width: '100%' }}
+                    size="small"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Departure City" required>
+                  <Select
+                    value={departureCity}
+                    onChange={setDepartureCity}
+                    placeholder="Select Departure City"
+                    style={{ width: '100%' }}
+                    size="small"
+                  >
+                    <Option value="Tirana">Tirana</Option>
+                    <Option value="Durres">Durres</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label="Departure Time" required>
+                  <Select
+                    value={departureTime}
+                    onChange={setDepartureTime}
+                    placeholder="Select Departure Time"
+                    style={{ width: '100%' }}
+                    size="small"
+                  >
+                    <Option value="09:00">09:00</Option>
+                    <Option value="13:00">13:00</Option>
+                    <Option value="15:00">15:00</Option>
+                    <Option value="18:00">18:00</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Arrival City" required>
+                  <Select
+                    value={arrivalCity}
+                    onChange={setArrivalCity}
+                    placeholder="Select Arrival City"
+                    style={{ width: '100%' }}
+                    size="small"
+                  >
+                    <Option value="Tirana">Tirana</Option>
+                    <Option value="Durres">Durres</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label="Arrival Time" required>
+                  <Select
+                    value={arrivalTime}
+                    onChange={setArrivalTime}
+                    placeholder="Select Arrival Time"
+                    style={{ width: '100%' }}
+                    size="small"
+                  >
+                    <Option value="09:10">09:10</Option>
+                    <Option value="10:10">10:10</Option>
+                    <Option value="14:10">14:10</Option>
+                    <Option value="16:10">16:10</Option>
+                    <Option value="19:10">19:10</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Price" required>
+                  <Select
+                    value={price}
+                    onChange={setPrice}
+                    placeholder="Select Price"
+                    style={{ width: '100%' }}
+                    size="small"
+                  >
+                    <Option value="500 Leke">500 Leke</Option>
+                    <Option value="550 Leke">550 Leke</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item>
+              <Button className="w-full " htmlType="submit" >
+                Add Ticket
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card>
       </div>
     </>
   );

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from '../Sidebar';
 import AddEmployerSideBar from '../Employers/AddEmployerSideBar';
 import { useAuth } from '@/app/context/AuthContext';
+import { Table } from 'antd';
 
 const AdminEmployers = ({searchParams}) => {
 
@@ -42,6 +43,29 @@ const AdminEmployers = ({searchParams}) => {
   }, [searchParams,triggered,type]);
 
 
+  const columns = [
+    {
+      title: "First Name",
+      dataIndex: "firstName",
+      key: "firstName",
+    },
+    {
+      title: "Last Name",
+      dataIndex: "lastName",
+      key: "lastName"
+    },
+    {
+      title: "Hire Date",
+      dataIndex: "hireDate",
+      key: "hireDate",
+    },
+    {
+      title: "Salary",
+      dataIndex: "salary",
+      key: "salary",
+    },
+
+  ];
 
 
   useEffect(() => {
@@ -51,33 +75,18 @@ const AdminEmployers = ({searchParams}) => {
   return (
    <div className='flex flex-row justify-between  items-start gap-x-28'>
 
+<Table
+        dataSource={employeeData}
+        columns={columns}
+        rowKey={(record) => record.key}
+        onRow={(record) => ({
+          onClick: () => toggleSidebar(record),
+        })}
+      />
+
      <div>
 
-<table class="text-left lg:min-w-4/5 bg-white text-sm font-light border-collapse  border-2 border-slate-400">
-<thead class="border-b font-medium dark:border-neutral-500  ">
-<tr >
-  <th className="px-6 py-4 ">First Name</th>
-  <th className="px-6 py-4 ">Hire Date</th>
-  <th className="px-6 py-4 ">Salary</th>
 
-</tr>
-</thead>
-<tbody>
-{employeeData && employeeData.map((dt, i) => (
-<tr className="border-b dark:border-neutral-500 text-center" key={i}  onClick={() => toggleSidebar(dt)}>
-  <th className="whitespace-nowrap px-6 py-4">{dt.firstName}</th>
-  <th className="whitespace-nowrap px-6 py-4">{dt.hireDate}</th>
-  <th className="whitespace-nowrap px-6 py-4">{dt.salary}</th>
-
-</tr>
-
-))
-
-}
-
-
-</tbody>
-</table>
 <Sidebar thirdData={selectedTicket}  isOpen={isOpen} setIsOpen={setIsOpen} setTriggered={setTriggered} triggered={triggered}/>
 <AddEmployerSideBar isOpen={type} setIsOpen={setType}/>
 </div>

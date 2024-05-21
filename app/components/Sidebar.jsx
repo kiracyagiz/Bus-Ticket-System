@@ -108,12 +108,12 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData, fourthData, setTr
       {dt && (
         <div>
           <div className="flex mt-4 justify-center gap-x-28">
-            <div className="flex flex-col mr-2">
+            <div className="flex flex-col text-center items-center ">
               {seats.slice(0, 10).map((item, i) => (
                 <Button
                   key={i}
-                  className={`mb-2 w-20 h-14 ${
-                    selectedSeat === i ? 'bg-blue-500' : ''
+                  className={`mb-2 w-20  h-14 ${
+                    selectedSeat === i ? 'bg-yellow-300' : ''
                   }`}
                   onClick={() => handleSeatClick(i)}
                 >
@@ -126,6 +126,7 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData, fourthData, setTr
                           : "white"
                     }
                     size={30}
+                    className="flex mx-auto"
                   />
                 </Button>
               ))}
@@ -135,7 +136,7 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData, fourthData, setTr
                 <Button
                   key={i}
                   className={`mb-2 w-20 h-14 ${
-                    selectedSeat === i + 10 ? 'bg-blue-500' : ''
+                    selectedSeat === i + 10 ? ' bg-yellow-300' : ''
                   }`}
                   onClick={() => handleSeatClick(i + 10)}
                 >
@@ -148,6 +149,7 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData, fourthData, setTr
                           : "white"
                     }
                     size={30}
+                    className="flex mx-auto "
                   />
                 </Button>
               ))}

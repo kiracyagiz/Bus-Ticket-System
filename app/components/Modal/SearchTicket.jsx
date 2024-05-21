@@ -4,6 +4,7 @@ import { cities } from '@/app/references/cities'
 import React, { useState } from 'react'
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Link from "next/link";
+import { Button } from 'antd';
 
 
 export default function SearchTicket() {
@@ -12,12 +13,11 @@ export default function SearchTicket() {
   const [arrivalCity, setArrivalCity] = useState("");
   const [information,setInformattion] = useState('');
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-3xl font-semibold mb-6">Find Your Bus Ticket</h1>
+    <div className="flex justify-center items-center h-screen pb-8">
+      <div className=" flex w-full  gap-x-20 bg-white p-8 rounded-lg shadow-md">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="mb-4">
-            <label htmlFor="date" className="text-sm text-gray-600 block mb-1">
+          <div className="mb-4 ">
+            <label htmlFor="date" className="text-sm  text-gray-600 block mb-1">
               <FaCalendarAlt className="inline-block mr-2" /> Select Date
             </label>
             <input
@@ -81,37 +81,12 @@ export default function SearchTicket() {
             },
           }}
         >
-          <p className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-md inline-block hover:bg-blue-600">
+          <p className="mt-6 text-sm whitespace-nowrap  bg-blue-500 text-white px-4 py-2 rounded-md flex hover:bg-blue-600">
             Find Ticket
           </p>
         </Link>
 
-        <div className="flex flex-col py-2">
-          <label
-            htmlFor="textInput"
-            className="mb-2 text-gray-600 font-semibold"
-          >
-            Check your bus information with your ticket id:
-          </label>
-          <input
-            type="text"
-            id="textInput"
-            onChange={(e)=> setInformattion(e.target.value)}
-            name="textInput"
-            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-            placeholder="Type here..."
-          />
-        </div>
-        <Link
-         href={`/ticketInfo/${information}`}
-        >
-        <button
-          className=
-          "bg-blue-400 mt-8 text-white font-semibold p-2"
-        >
-          Find Information About Your Booking Ticket
-        </button>
-        </Link>
+      
       
       </div>
     </div>

@@ -1,27 +1,30 @@
-'use client'
+'use client';
 
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/app/firebase';
 import { useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
-import { v4 as uuidv4 } from 'uuid'; // Import the UUID library
+import { v4 as uuidv4 } from 'uuid';
+import { Drawer, Form, Input, Button, DatePicker, Typography } from 'antd';
+import { ToastContainer, toast } from 'react-toastify';
+
+const { Title } = Typography;
 
 const AddEmployerSideBar = ({ isOpen, setIsOpen }) => {
-  const [hireDate, setHireDate] = useState("");
+  const [hireDate, setHireDate] = useState(null);
   const [salary, setSalary] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState(""); 
 
   const { user } = useAuth();
 
-  const handleHireDateChange = (e) => {
-    // Convert the timestamp to a Date object
-    const timestamp = e.target.value;
-    const date = new Date(timestamp);
-    // Format the date as "YYYY-MM-DD" for input type "date"
-    const formattedDate = date.toISOString().split('T')[0];
-    // Set the formatted date to the state
-    setHireDate(formattedDate);
+  const handleHireDateChange = (date) => {
+    if (date) {
+      const formattedDate = date.format('YYYY-MM-DD');
+      setHireDate(formattedDate);
+    } else {
+      setHireDate(null);
+    }
   };
 
   const handleSalaryChange = (e) => {
@@ -37,12 +40,27 @@ const AddEmployerSideBar = ({ isOpen, setIsOpen }) => {
   };
 
   const handleAddEmployee = async () => {
+
+    if (!hireDate) {
+      toast.error('Please fill in the Hire Date.');
+      return;
+    }
+    if (!salary) {
+      toast.error('Please fill in the Salary.');
+      return;
+    }
+    if (!firstName) {
+      toast.error('Please fill in the First Name.');
+      return;
+    }
+    if (!lastName) {
+      toast.error('Please fill in the Last Name.');
+      return;
+    }
+  
     try {
-      // Generate a random UUID for employeeId
       const employeeId = uuidv4();
-      
-      // Add employee data to Firestore collection
-      const docRef = await addDoc(collection(db, 'employee'), {
+      await addDoc(collection(db, 'employee'), {
         employeeId: employeeId, 
         hireDate: hireDate,
         salary: salary,
@@ -50,9 +68,9 @@ const AddEmployerSideBar = ({ isOpen, setIsOpen }) => {
         lastName: lastName,
         companyId: user.uid
       });
-      console.log("Employee added with ID: ", docRef.id);
+      console.log("Employee added with ID: ", employeeId);
+      toast.success('New employee added successfully');
 
-      // Clear input fields after adding employee
       setHireDate("");
       setSalary("");
       setFirstName("");
@@ -64,66 +82,57 @@ const AddEmployerSideBar = ({ isOpen, setIsOpen }) => {
   };
 
   return (
-    <div
-      className={`fixed top-0 right-0  h-full bg-slate-600 text-white p-4 transition-transform transform ${
-        isOpen ? " lg:w-1/3" : "translate-x-full"
-      }`}
+   <>
+   <ToastContainer/>
+    <Drawer
+      title="Add New Employee"
+      placement="right"
+      closable={true}
+      onClose={() => setIsOpen(false)}
+      open={isOpen}
+      width={400}
     >
-      <button onClick={() => setIsOpen(false)}>Close Window</button>
-      <div className="mt-4">
-        <label htmlFor="hireDate" className="block mb-2">
-          Hire Date:
-        </label>
-        <input
-          type="date"
-          id="hireDate"
-          value={hireDate}
-          onChange={handleHireDateChange}
-          className="border border-gray-400 px-2 py-1 rounded text-black"
-        />
-      </div>
-      <div className="mt-4">
-        <label htmlFor="salary" className="block mb-2">
-          Salary:
-        </label>
-        <input
-          type="number"
-          id="salary"
-          value={salary}
-          onChange={handleSalaryChange}
-          className="border border-gray-400 px-2 py-1 rounded text-black" 
-        />
-      </div>
-      <div className="mt-4">
-        <label htmlFor="firstName" className="block mb-2">
-          First Name:
-        </label>
-        <input
-          type="text"
-          id="firstName"
-          value={firstName}
-          onChange={handleFirstNameChange}
-          className="border border-gray-400 px-2 py-1 rounded text-black"
-        />
-      </div>
-      <div className="mt-4">
-        <label htmlFor="lastName" className="block mb-2">
-          Last Name:
-        </label>
-        <input
-          type="text"
-          id="lastName"
-          value={lastName}
-          onChange={handleLastNameChange}
-          className="border  border-gray-400 px-2 py-1 rounded text-black"
-        />
-      </div>
-      <button onClick={handleAddEmployee} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        Add Employee
-      </button>
-    </div>
+      <Form layout="vertical" onFinish={handleAddEmployee}>
+        <Form.Item label="Hire Date" required>
+          <DatePicker 
+            onChange={handleHireDateChange} 
+            style={{ width: '100%' }} 
+          />
+        </Form.Item>
+        <Form.Item label="Salary" required>
+          <Input 
+            type="number" 
+            value={salary}
+            onChange={handleSalaryChange}
+            style={{ width: '100%' }} 
+            placeholder='5000'
+          />
+        </Form.Item>
+        <Form.Item label="First Name" required>
+          <Input 
+            value={firstName}
+            onChange={handleFirstNameChange}
+            style={{ width: '100%' }} 
+            placeholder='Yagiz'
+          />
+        </Form.Item>
+        <Form.Item label="Last Name" required>
+          <Input 
+            value={lastName}
+            onChange={handleLastNameChange}
+            style={{ width: '100%' }}
+            placeholder='Kirac'
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button htmlType="submit" style={{ width: '100%' }}>
+            Add Employee
+          </Button>
+        </Form.Item>
+      </Form>
+    </Drawer>
+    </>
   );
 };
 
 export default AddEmployerSideBar;
-
