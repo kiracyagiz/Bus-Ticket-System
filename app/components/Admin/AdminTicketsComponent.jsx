@@ -6,6 +6,9 @@ import saveAs from "file-saver";
 import { getFilteredData } from "@/app/collection";
 import { Table, Button, Select, DatePicker } from "antd";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const { Option } = Select;
 
@@ -118,6 +121,7 @@ const AdminTicketsComponent = ({ searchParams }) => {
 
   return (
     <div className="flex gap-x-8 py-8 ">
+            <ToastContainer />
       <Button onClick={exportToExcel}>Export</Button>
       <Table
         dataSource={tickets}
@@ -133,6 +137,7 @@ const AdminTicketsComponent = ({ searchParams }) => {
         secondDt={selectedTicket}
         setTriggered={setTriggered}
         triggered={triggered}
+        toast={toast}
       />
 
       <div className=" bg-white border-slate-400 border-2 w-1/2 min-w-1/2 max-w-1/2 text-center p-4 flex flex-col gap-y-8 h-full text-black">

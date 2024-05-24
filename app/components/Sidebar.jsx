@@ -8,7 +8,7 @@ import { Button, Input, Modal, Select } from "antd";
 
 const { Option } = Select;
 
-const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData, fourthData, setTriggered, triggered, setSelectedSeat, selectedSeat }) => {
+const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData, fourthData, setTriggered, triggered, setSelectedSeat, selectedSeat, toast }) => {
   const route = useRouter();
 
   const handleSeatClick = (seatId) => {
@@ -70,8 +70,10 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData, fourthData, setTr
       console.log('Data updated successfully');
       setIsOpen(!isOpen);
       setTriggered(!triggered);
+      toast.success("Ticket is updated!")
     } catch (error) {
       console.error('Error updating data:', error);
+      toast.error("There is an error , please try again later!")
     }
   };
 
@@ -81,8 +83,12 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData, fourthData, setTr
       console.log('Data deleted successfully');
       setIsOpen(!isOpen);
       setTriggered(!triggered);
+      toast.success("Ticket is deleted!")
+
     } catch (error) {
       console.error('Deleted data:', error);
+      toast.error("There is an error , please try again later!")
+
     }
   };
 
@@ -209,8 +215,8 @@ const Sidebar = ({ isOpen, setIsOpen, dt, secondDt, thirdData, fourthData, setTr
             className="mb-2"
           />
           <div className="flex justify-center gap-x-8">
-            <Button type="primary" onClick={updateTicket}>UPDATE</Button>
-            <Button type="danger" onClick={deleteTicket}>DELETE</Button>
+            <Button className="w-full text-white bg-blue-500 " onClick={updateTicket}>UPDATE</Button>
+            <Button className=" bg-red-600 w-full text-white" onClick={deleteTicket}>DELETE</Button>
           </div>
         </div>
       )}

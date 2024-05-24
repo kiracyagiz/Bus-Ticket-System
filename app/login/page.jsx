@@ -96,7 +96,7 @@ function Login() {
             </Form>
           </TabPane>
           <TabPane tab={<span><GoogleOutlined /> Google</span>} key="google">
-            <Button className='w-full' icon={<GoogleOutlined />} onClick={loginWithGoogle} >
+            <Button className='w-full' icon={<GoogleOutlined />} >
               Login with Google
             </Button>
           </TabPane>

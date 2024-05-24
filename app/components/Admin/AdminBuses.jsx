@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import React, { useEffect, useState } from 'react';
 import { FaCheckSquare } from 'react-icons/fa';
@@ -6,14 +6,14 @@ import { ImCancelCircle } from 'react-icons/im';
 import { getBusData } from '@/app/collection';
 import ExcelJS from 'exceljs';
 import saveAs from 'file-saver';
-import Sidebar from '../Sidebar';
+import { Table, Button, Space, Drawer } from 'antd';
 
 const AdminBuses = () => {
-  const [busData, setBusData] = useState();
-  const [selectedBus, setSelectedBus] = useState([]);
+  const [busData, setBusData] = useState([]);
+  const [selectedBus, setSelectedBus] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleSidebar = (dt) => {
+  const toggleDrawer = (dt) => {
     setIsOpen(!isOpen);
     setSelectedBus(dt);
   };
@@ -49,41 +49,64 @@ const AdminBuses = () => {
     fetchData();
   }, []);
 
+  const columns = [
+    {
+      title: 'Bus Id',
+      dataIndex: 'busesId',
+      key: 'busesId',
+    },
+    {
+      title: 'Employee Id',
+      dataIndex: 'employeeId',
+      key: 'employeeId',
+    },
+    {
+      title: 'Number Plate',
+      dataIndex: 'numberPlate',
+      key: 'numberPlate',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) =>
+        status === 'active' ? (
+          <FaCheckSquare size={20} color="green" />
+        ) : (
+          <ImCancelCircle size={20} color="red" />
+        ),
+    },
+  ];
+
   return (
-    <div className='flex gap-x-8 py-8'>
-      <button onClick={exportToExcel}>Export to Excel</button>
-      <table className='text-left lg:min-w-4/5 bg-white text-sm font-light border-collapse border-2 border-slate-400'>
-        <thead className='border-b font-medium dark:border-neutral-500 text-center'>
-          <tr>
-            <th className='px-6 py-4'>Bus Id</th>
-            <th className='px-6 py-4'>Employee Id</th>
-            <th className='px-6 py-4'>Number Plate</th>
-            <th className='px-6 py-4'>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {busData &&
-            busData.map((dt, i) => (
-              <tr
-                className='border-b dark:border-neutral-500 text-center'
-                key={i}
-                onClick={() => toggleSidebar(dt)}
-              >
-                <th className='whitespace-nowrap px-6 py-4'>{dt.busesId}</th>
-                <th className='whitespace-nowrap px-6 py-4'>{dt.employeeId}</th>
-                <th className='whitespace-nowrap px-6 py-4'>{dt.numberPlate}</th>
-                <th className='whitespace-nowrap px-6 py-4'>
-                  {dt.status === 'active' ? (
-                    <FaCheckSquare size={30} color='green' />
-                  ) : (
-                    <ImCancelCircle size={30} color='red' />
-                  )}
-                </th>
-              </tr>
-            ))}
-        </tbody>
-      </table>
-      <Sidebar fourthData={selectedBus} isOpen={isOpen} setIsOpen={setIsOpen} />
+    <div className="flex flex-col gap-y-4 py-8">
+      <div className="flex justify-start mb-4">
+        <Button type="primary" onClick={exportToExcel}>
+          Export to Excel
+        </Button>
+      </div>
+      <Table
+        columns={columns}
+        dataSource={busData}
+        rowKey={(record) => record.busesId}
+        onRow={(record) => ({
+          onClick: () => toggleDrawer(record),
+        })}
+        pagination={{ pageSize: 10 }}
+        style={{ minWidth: '80%' }}
+      />
+      <Drawer
+        title="Bus Details"
+        placement="right"
+        onClose={() => setIsOpen(false)}
+        open={isOpen}
+        width={400}
+      >
+        <p>Bus Id: {selectedBus?.busesId}</p>
+        <p>Employee Id: {selectedBus?.employeeId}</p>
+        <p>Number Plate: {selectedBus?.numberPlate}</p>
+        <p>Status: {selectedBus?.status}</p>
+      </Drawer>
     </div>
   );
 };
