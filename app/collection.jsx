@@ -36,13 +36,14 @@ export const getSelectedTicket = async (searchParams) => {
   try {
        
   
+    console.log(searchParams,"searchparams")
 
     const collectionRef = collection(db, "busTickets");
     const q = query(
       collectionRef,
       where(searchParams.departureCity && "departureCity", "==", searchParams.departureCity),
       where(searchParams.arrivalCity && "arrivalCity", "==", searchParams.arrivalCity),
-      where(searchParams.rideDate && "rideDate", "==", searchParams.rideDate)
+      where(searchParams.rideDate && "rideDate", "==", searchParams.date   )
     );
     const querySnapshot = await getDocs(q);
 
@@ -338,12 +339,14 @@ export const getAllTickets = async () => {
   };
 
   export const addTicketInformation = async (newTicketInfoData) => {
+
+    console.log(newTicketInfoData,"aaaa")
     try {
       const collectionRef = collection(db, "ticketInformation");
   
       const newTicketInfoRef = await addDoc(collectionRef, newTicketInfoData);
   
-      return newTicketInfoRef.id;
+      return newTicketInfoData;
     } catch (error) {
       console.error("Error adding ticket information:", error);
       return null;
