@@ -1,14 +1,36 @@
+import { getCompany } from '@/app/collection';
+import { useAuth } from '@/app/context/AuthContext';
 import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { FaBus } from 'react-icons/fa';
 
-const TicketWidget = ({ticket}) => {
+const TicketWidget = ({ticket,user}) => {
+
+    const [company,setCompany] = useState()
+    const [loading,setLoading] = useState()
+
+
+    useEffect(() => {
+        const fetchCompany = async () => {
+          setLoading(true);
+          const companyData = await getCompany(ticket.companyId);
+          setCompany(companyData);
+          setLoading(false);
+        };
+    
+        fetchCompany();
+      }, []);
+
+
     return (
         <>
             <div className="p-10 w-2/3">
                 <div className="max-w-full  bg-white flex flex-col rounded overflow-hidden shadow-lg">
                     <div className="flex flex-row items-baseline flex-nowrap bg-gray-100 p-2">
-                        <FaBus className="mt-2 mr-1" size={20} />
+                    <FaBus className="mr-1" size={12} />
+
                         <h1 className="ml-2 uppercase font-bold text-gray-500">departure</h1>
                         <p className="ml-2 font-normal text-gray-500">{ticket.rideDate}</p>
                     </div>
@@ -22,7 +44,7 @@ const TicketWidget = ({ticket}) => {
                         <div className="flex flex-row place-items-center p-2">
                             <FaBus className="mr-2" size={20} />
                             <div className="flex flex-col ml-2">
-                                <p className="text-xs text-gray-500 font-bold">Greyhound</p>
+                                <p className="text-xs text-gray-500 font-bold">{company && company.name}</p>
                                 <p className="text-xs text-gray-500">{ticket.route}</p>
                                 <div className="text-xs text-gray-500">2*23kg</div>
                             </div>
@@ -40,7 +62,7 @@ const TicketWidget = ({ticket}) => {
                     <div className="mt-4 bg-gray-100 flex   justify-between items-baseline">
                      
                         <div className="md:border-l-2 mx-6 md:border-dotted  flex flex-row justify-between w-full py-4 mr-6 ">
-                            <FaBus className="w-12 h-10 p-2 mx-2 self-center  bg-green-800 rounded-full fill-current text-white" />
+                        <img src={company && company.image} alt="Company Logo" height={40} width={100} />
                             <div className="text-sm mx-2 flex  flex-col">
                                 <p>Flexible Ticket</p>
                                 <p className="font-bold">${ticket.price}</p>

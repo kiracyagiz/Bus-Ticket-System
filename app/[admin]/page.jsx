@@ -10,6 +10,7 @@ import AdminTableComponent from "../components/Admin/AdminTableComponent";
 import AdminDefaultComponent from "../components/Admin/AdminDefaultComponent";
 import AdminEmployers from "../components/Admin/AdminEmployers";
 import AdminBuses from "../components/Admin/AdminBuses";
+import ProfileComponent from "../components/Profile/ProfileComponent";
 
 function Admin({ params }) {
   const router = useRouter();
@@ -18,6 +19,8 @@ function Admin({ params }) {
   const search = searchParams.get("componentName");
 
 
+
+  console.log(user,"user")
   useEffect(() => {
     if (!user || !user.uid) {
       router.push("/");
@@ -50,6 +53,9 @@ function Admin({ params }) {
       break;
     case "allBuses":
       renderedComponent = <AdminBuses />;
+      break;
+    case "profile": 
+        renderedComponent = <ProfileComponent/>
       break;
     default:
       renderedComponent = <AdminDefaultComponent/>

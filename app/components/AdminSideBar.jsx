@@ -1,5 +1,6 @@
 "use client"
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import { FaHome, FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa';
@@ -15,10 +16,22 @@ const AdminSideBar = ({logoutHandler}) => {
       <FaHome size={35} />
       <span className="mt-1 text-xs">Profile</span>
     </div>
-    <div className="mb-4 cursor-pointer flex flex-col items-center" onClick={() => navigateTo('/admin/profile')}>
+    <Link
+            href={
+            {
+              pathname: '/admin',
+              query: {
+                componentName: "profile",
+              }
+            }
+            }
+            >
+             <div className="mb-4 cursor-pointer flex flex-col items-center" >
       <FaUser size={35} />
       <span className="mt-1 text-xs">Profile</span>
     </div>
+            </Link>
+  
     <div className="mb-4 cursor-pointer flex flex-col items-center" onClick={() => navigateTo('/admin/settings')}>
       <FaCog size={35} />
       <span className="mt-1 text-xs">Settings</span>

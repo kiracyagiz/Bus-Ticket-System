@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from '../Sidebar';
 import AddEmployerSideBar from '../Employers/AddEmployerSideBar';
 import { useAuth } from '@/app/context/AuthContext';
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 
 const AdminEmployers = ({searchParams}) => {
 
@@ -92,7 +92,7 @@ const AdminEmployers = ({searchParams}) => {
 </div>
 
 
-<button onClick={addEmployerSide}>Add Employer Button</button>
+<Button className='mt-8' onClick={addEmployerSide}>Add Employer Button</Button>
 
    </div>
   )

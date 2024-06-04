@@ -5,6 +5,7 @@ import { getSelectedTicket } from "../collection";
 import { Card, DatePicker, Timeline } from "antd";
 import moment from "moment";
 import TicketWidget from "../components/Ticket/TicketWidget";
+import { AuthContextProvider, useAuth } from "../context/AuthContext";
 
 export default function Search({ searchParams }) {
   const [tickets, setTickets] = useState([]);
@@ -17,6 +18,9 @@ export default function Search({ searchParams }) {
       setSelectedDate(moment(searchParams.rideDate));
     }
   }, [searchParams]);
+
+  const {user} = useAuth()
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,7 +45,8 @@ export default function Search({ searchParams }) {
   };
 
   return (
-    <div className="flex flex-col gap-y-4 text-center justify-center items-center">
+   <AuthContextProvider>
+     <div className="flex flex-col gap-y-4 text-center justify-center items-center">
       <div className="flex space-x-4">
       {[...Array(5)].map((_, index) => {
   const currentDate = moment(tickets && tickets[0] && tickets[0].rideDate).subtract(2, "days").add(index, "days");
@@ -61,11 +66,12 @@ export default function Search({ searchParams }) {
    
       {tickets && tickets.length > 0 ? (
         tickets.map((ticket) => (
-          <TicketWidget key={ticket.id} ticket={ticket} />
+          <TicketWidget key={ticket.id} ticket={ticket}  user={user}/>
         ))
       ) : (
         <div>Data Not Found</div>
       )}
     </div>
+   </AuthContextProvider>
   );
 }

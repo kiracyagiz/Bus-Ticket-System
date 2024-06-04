@@ -30,6 +30,70 @@ export const getTicket = async () => {
     console.error("Belgeler alınamadı:", error);
     return null; // veya istediğiniz bir değer
   }
+}; 
+
+
+
+export const getCompany = async (uid) => {
+  try {
+    const companyDocRef = doc(db, "companies", uid);
+    const companyDocSnapshot = await getDoc(companyDocRef);
+
+    if (companyDocSnapshot.exists()) {
+      return companyDocSnapshot.data();
+    } else {
+      console.error("Company does not exist");
+      return null; // or any other value you prefer
+    }
+  } catch (error) {
+    console.error("Error getting company:", error);
+    return null; // or any other value you prefer
+  }
+};
+export const createCompany = async (uid, companyName,email,image) => {
+  try {
+    const companyDocRef = doc(db, "companies", uid);
+    await setDoc(companyDocRef, { name: companyName , companyName: email,image: image});
+    console.log("Company created successfully");
+    return true;
+  } catch (error) {
+    console.error("Error creating company:", error);
+    return false;
+  }
+};
+
+
+export const updateCompany = async (uid, updatedData) => {
+  try {
+    const companyDocRef = doc(db, "companies", uid);
+    await updateDoc(companyDocRef, updatedData);
+    return true; // Return true if update is successful
+  } catch (error) {
+    console.error("Error updating company:", error);
+    throw error; // Throw error if update fails
+  }
+};
+
+export const deleteCompany = async (uid) => {
+  try {
+    const companyDocRef = doc(db, "companies", uid);
+    await deleteDoc(companyDocRef);
+    return true; // Return true if deletion is successful
+  } catch (error) {
+    console.error("Error deleting company:", error);
+    throw error; // Throw error if deletion fails
+  }
+};
+
+export const deletBuses = async (uid) => {
+  try {
+    const companyDocRef = doc(db, "buses", uid);
+    await deleteDoc(companyDocRef);
+    return true; // Return true if deletion is successful
+  } catch (error) {
+    console.error("Error deleting company:", error);
+    throw error; // Throw error if deletion fails
+  }
 };
 
 export const getSelectedTicket = async (searchParams) => {

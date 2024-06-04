@@ -12,6 +12,8 @@ const Checkout = ({ searchParams }) => {
   const [ticketOpen,setTicketOpen]  = useState()
   const [selectedSeat, setSelectedSeat] = useState(null);
   const [result,setResult] = useState()
+
+  const [id,setId] = useState()
   const [formData, setFormData] = useState({
     seat: selectedSeat,
     gender: "",
@@ -57,7 +59,7 @@ const Checkout = ({ searchParams }) => {
       // Then, add ticket information
       const newTicketInfoId = await addTicketInformation(newData);
 
-      console.log(newTicketInfoId,"newTicketInfo");
+      setId(newTicketInfoId)
    
     } catch (error) {
       console.error("Error adding ticket information:", error);
@@ -320,6 +322,7 @@ const Checkout = ({ searchParams }) => {
           ticketData={ticketData}
           formData={formData}
           handleTicketInfoFormSubmit={handleTicketInfoFormSubmit}
+          id={id}
         />
       )}
     </div>

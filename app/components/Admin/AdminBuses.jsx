@@ -1,40 +1,16 @@
-'use client'
+"use client"
 
 import React, { useEffect, useState } from 'react';
 import { FaCheckSquare } from 'react-icons/fa';
 import { ImCancelCircle } from 'react-icons/im';
-import { getBusData } from '@/app/collection';
-import ExcelJS from 'exceljs';
-import saveAs from 'file-saver';
-import { Table, Button, Space, Drawer } from 'antd';
+import { deletBuses, getBusData} from '@/app/collection';
+import { Table, Button, Drawer, Input } from 'antd';
+import { deleteDoc, updateDoc } from 'firebase/firestore';
 
 const AdminBuses = () => {
   const [busData, setBusData] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-
-  const toggleDrawer = (dt) => {
-    setIsOpen(!isOpen);
-    setSelectedBus(dt);
-  };
-
-  const exportToExcel = () => {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Bus Data');
-
-    // Add headers
-    worksheet.addRow(['Bus Id', 'Employee Id', 'Number Plate', 'Status']);
-
-    // Add data
-    busData.forEach((dt) => {
-      worksheet.addRow([dt.busesId, dt.employeeId, dt.numberPlate, dt.status]);
-    });
-
-    // Save the workbook
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      saveAs(new Blob([buffer]), 'bus_data.xlsx');
-    });
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +24,22 @@ const AdminBuses = () => {
 
     fetchData();
   }, []);
+
+  const toggleDrawer = (dt) => {
+    setIsOpen(!isOpen);
+    setSelectedBus(dt);
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      await updateDoc('buses', selectedBus.id, selectedBus);
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error updating bus data:', error);
+    }
+  };
+ 
+  
 
   const columns = [
     {
@@ -80,11 +72,6 @@ const AdminBuses = () => {
 
   return (
     <div className="flex flex-col gap-y-4 py-8">
-      <div className="flex justify-start mb-4">
-        <Button type="primary" onClick={exportToExcel}>
-          Export to Excel
-        </Button>
-      </div>
       <Table
         columns={columns}
         dataSource={busData}
@@ -99,13 +86,28 @@ const AdminBuses = () => {
         title="Bus Details"
         placement="right"
         onClose={() => setIsOpen(false)}
-        open={isOpen}
+        visible={isOpen}
         width={400}
       >
-        <p>Bus Id: {selectedBus?.busesId}</p>
-        <p>Employee Id: {selectedBus?.employeeId}</p>
-        <p>Number Plate: {selectedBus?.numberPlate}</p>
-        <p>Status: {selectedBus?.status}</p>
+        {selectedBus && (
+          <div>
+            <p>Bus Id: {selectedBus.busesId}</p>
+            <Input
+              value={selectedBus.employeeId}
+              onChange={(e) =>
+                setSelectedBus({ ...selectedBus, employeeId: e.target.value })
+              }
+            />
+            <Input
+              value={selectedBus.numberPlate}
+              onChange={(e) =>
+                setSelectedBus({ ...selectedBus, numberPlate: e.target.value })
+              }
+            />
+            <Button onClick={handleSaveChanges}>Save Changes</Button>
+            <Button onClick={()=> deletBuses(selectedBus.id)}>Delete Bus</Button>
+          </div>
+        )}
       </Drawer>
     </div>
   );
