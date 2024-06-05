@@ -78,7 +78,7 @@ const ReceiptModal = ({ isOpen, setIsOpen, ticketData, formData, handleTicketInf
               </div>
             </div>
             <div className="flex justify-center items-center">
-              <QRCode size={150} className="m-8" value={`http://localhost:3000/ticketInfo/${id}`} />
+              <QRCode size={150} className="m-8" value={`https://665fa4393df41500081c53ba--enchanting-paprenjak-d70bb1.netlify.app/ticketInfo/${id}`} />
             </div>
           </div>
         </div>
